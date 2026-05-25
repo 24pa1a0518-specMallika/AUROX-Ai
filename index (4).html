@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURIX AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <span class="logo-icon">◈</span>
+        <span class="logo-text">AURIX</span>
+      </div>
+      <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">‹</button>
+    </div>
+
+    <div class="mode-switcher">
+      <label class="mode-label">Mode</label>
+      <div class="mode-buttons">
+        <button class="mode-btn" id="minimalBtn" data-mode="minimal">
+          <span class="mode-icon">⚡</span>
+          <span>Minimal</span>
+        </button>
+        <button class="mode-btn active" id="autonomousBtn" data-mode="autonomous">
+          <span class="mode-icon">🤖</span>
+          <span>Autonomous</span>
+        </button>
+      </div>
+      <p class="mode-desc" id="modeDesc">Multi-step reasoning with tools &amp; planning</p>
+    </div>
+
+    <div class="tools-section" id="toolsSection">
+      <label class="mode-label">Active Tools</label>
+      <div class="tool-list">
+        <div class="tool-item active" id="tool-wiki">
+          <span class="tool-icon">🌐</span>
+          <span>Wikipedia Search</span>
+          <span class="tool-badge">ON</span>
+        </div>
+        <div class="tool-item active" id="tool-pdf">
+          <span class="tool-icon">📄</span>
+          <span>PDF Q&amp;A</span>
+          <span class="tool-badge">ON</span>
+        </div>
+        <div class="tool-item active" id="tool-study">
+          <span class="tool-icon">📚</span>
+          <span>Study Planner</span>
+          <span class="tool-badge">ON</span>
+        </div>
+        <div class="tool-item active" id="tool-notes">
+          <span class="tool-icon">📝</span>
+          <span>Notes Gen</span>
+          <span class="tool-badge">ON</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <div class="history-header">
+        <label class="mode-label">History</label>
+        <button class="clear-btn" id="clearHistory" title="Clear history">✕</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <p class="history-empty">No chats yet</p>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <button class="settings-btn" id="settingsBtn">⚙ Settings</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main" id="main">
+
+    <!-- Top bar -->
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" title="Open sidebar">☰</button>
+      <div class="topbar-center">
+        <span class="current-mode-tag" id="currentModeTag">🤖 Autonomous Agent</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="action-btn" id="newChatBtn" title="New chat">+ New</button>
+        <label class="action-btn upload-label" title="Upload PDF">
+          📎 PDF
+          <input type="file" id="pdfInput" accept=".pdf" hidden />
+        </label>
+      </div>
+    </header>
+
+    <!-- PDF banner -->
+    <div class="pdf-banner" id="pdfBanner" style="display:none">
+      <span class="pdf-icon">📄</span>
+      <span id="pdfName">document.pdf</span>
+      <span class="pdf-status">loaded — ask anything about it</span>
+      <button class="pdf-remove" id="pdfRemove">✕</button>
+    </div>
+
+    <!-- Chat area -->
+    <div class="chat-area" id="chatArea">
+      <div class="welcome" id="welcomeScreen">
+        <div class="welcome-logo">◈</div>
+        <h1 class="welcome-title">AURIX AI</h1>
+        <p class="welcome-sub">Your autonomous AI assistant — ready to think, plan, and act.</p>
+        <div class="quick-actions">
+          <button class="quick-btn" data-prompt="Help me create a JEE study plan for the next 30 days">📚 JEE Study Plan</button>
+          <button class="quick-btn" data-prompt="Search Wikipedia for quantum computing and summarize it">🌐 Wikipedia Search</button>
+          <button class="quick-btn" data-prompt="Generate detailed notes on photosynthesis for EAMCET">📝 Generate Notes</button>
+          <button class="quick-btn" data-prompt="Explain how neural networks work step by step">🤖 Explain AI</button>
+        </div>
+      </div>
+      <div class="messages" id="messages"></div>
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <div class="input-box">
+        <textarea
+          id="userInput"
+          placeholder="Ask anything… AURIX will think and act."
+          rows="1"
+          autocomplete="off"
+        ></textarea>
+        <button class="send-btn" id="sendBtn" title="Send">
+          <span class="send-icon">▶</span>
+        </button>
+      </div>
+      <p class="input-hint">AURIX uses Gemini API · <span id="modelHint">Autonomous mode with tools</span></p>
+    </div>
+  </main>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settingsModal" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Settings</h2>
+        <button class="modal-close" id="modalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <label class="field-label">Gemini API Key</label>
+        <input type="password" id="apiKeyInput" class="field-input" placeholder="AIzaSy…" />
+        <p class="field-hint">Get your key at <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com</a>. Stored only in your browser.</p>
+
+        <label class="field-label" style="margin-top:1.5rem">Gemini Model</label>
+        <select id="modelSelect" class="field-input">
+          <option value="gemini-2.0-flash">gemini-2.0-flash (recommended)</option>
+          <option value="gemini-1.5-flash">gemini-1.5-flash</option>
+          <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+        </select>
+
+        <label class="field-label" style="margin-top:1.5rem">Max Reasoning Steps (Autonomous)</label>
+        <input type="number" id="maxSteps" class="field-input" value="5" min="1" max="10" />
+
+        <button class="save-btn" id="saveSettings">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
